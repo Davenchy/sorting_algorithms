@@ -1,8 +1,9 @@
 #include "sort.h"
+#include <stdio.h>
 
 void swap(int *a, int *b);
-void quick_sort_recursive(int *array, size_t size, size_t low, size_t high);
-size_t partition(int *array, size_t size, size_t low, size_t high);
+void quick_sort_recursive(int *array, size_t size, ssize_t low, ssize_t high);
+size_t partition(int *array, size_t size, ssize_t low, ssize_t high);
 
 /**
  * quick_sort - sorts an array using quick sort algorithm
@@ -25,11 +26,11 @@ void quick_sort(int *array, size_t size)
  * @low: the index of the left range
  * @high: the index of the right range
  */
-void quick_sort_recursive(int *array, size_t size, size_t low, size_t high)
+void quick_sort_recursive(int *array, size_t size, ssize_t low, ssize_t high)
 {
 	size_t pivot;
 
-	if (!array || low >= high)
+	if (!array || low >= high || low < 0)
 		return;
 
 	pivot = partition(array, size, low, high);
@@ -39,33 +40,37 @@ void quick_sort_recursive(int *array, size_t size, size_t low, size_t high)
 }
 
 /**
- * partition - sort partition of an array
+ * partition - sort partition of an array using Lomuto scheme
  * @array: array to be sorted
  * @size: the size of the array
  * @low: the index of the partition left range
  * @high: the index of the partition right range
  * Return: pivot index
  */
-size_t partition(int *array, size_t size, size_t low, size_t high)
+size_t partition(int *array, size_t size, ssize_t low, ssize_t high)
 {
-	int p = array[((high - low) / 2) + low];
+	int p = array[high];
+	ssize_t i, j;
 
-	while (low < high)
+	for (i = low - 1, j = low; j < high; j++)
 	{
-		while (array[low] < p)
-			low++;
-
-		while (array[high] > p)
-			high--;
-
-		if (low >= high)
-			break;
-
-		swap(&array[low], &array[high]);
-		print_array(array, size);
+		if (array[j] <= p)
+		{
+			i++;
+			if (i == j)
+				continue;
+			swap(&array[i], &array[j]);
+			print_array(array, size);
+		}
 	}
 
-	return (high);
+	i++;
+	if (i != high)
+	{
+		swap(&array[i], &array[high]);
+		print_array(array, size);
+	}
+	return (i);
 }
 
 /**
